@@ -1,8 +1,10 @@
 # Compiled class file
 *.class
-workspace.xml
 # Log file
 *.log
+
+# idea files
+.idea/*
 
 # BlueJ files
 *.ctxt
