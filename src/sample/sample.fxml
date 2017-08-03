@@ -37,9 +37,7 @@
 
                             <children>
                                 <Label fx:id="label101" prefHeight="30.0" prefWidth="125.0" text="Test1">
-                                <font>
-                                    <Font 
-                                </font>
+
                                 </Label>
                                 <Label fx:id="label102" prefHeight="30.0" prefWidth="125.0" text="Test2" />
                                 <Label fx:id="label103" prefHeight="30.0" prefWidth="125.0" text="Test3" />
