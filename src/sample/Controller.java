@@ -1,52 +1,54 @@
 package sample;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import java.util.Optional;
 
 public class Controller {
-    private enum StopWatchStatus {
-        STOPPED, RUNNING
-    }
 
-    Optional<String> startTime = null;
+
+    private Optional<String> startTime = Optional.empty();
+
+    private int countdownFiveHours = 18000;
+    private IntegerProperty timeSeconds = new SimpleIntegerProperty(countdownFiveHours);
+    private Timeline countdownTLineFirst;
+
 
     @FXML
-    private Label label;
-
+    private Label L00Countdown;
     @FXML
-    private Label label101;
+    private Label LStopuhr;
     @FXML
-    private Label label102;
+    private Button testB;
 
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
 
-
-    @FXML
-    private Button testB;
-
-
     @FXML
     private void handleStartStop(ActionEvent event) {
+        startCountdowns();
 
-        TextInputDialog input = new TextInputDialog("Set start time: h:m");
-        input.setTitle("Set start time...");
-        input.setHeaderText("Set start time mr. primus: ");
-        if (startTime == null) startTime = input.showAndWait();
+        TextInputDialog input = new TextInputDialog("Set startCountdowns time: h:m");
+        input.setTitle("Set startCountdowns time...");
+        input.setHeaderText("Set startCountdowns time mr. primus: ");
+        if (!startTime.isPresent()) startTime = input.showAndWait();
         if (currentStatus == StopWatchStatus.STOPPED) {
             currentStatus = StopWatchStatus.RUNNING;
-            stopwatchWorker = new StopwatchWorker(label, startTime);
+            stopwatchWorker = new StopwatchWorker(LStopuhr, startTime);
             //  stopwatchWorker = new StopwatchWorker(label101, startTime);
             Thread t = new Thread(stopwatchWorker);
-            label.textProperty().bind(stopwatchWorker.messageProperty());
-            label101.textProperty().bind(stopwatchWorker.messageProperty());
-            label102.textProperty().bind(stopwatchWorker.messageProperty());
+            LStopuhr.textProperty().bind(stopwatchWorker.messageProperty());
 
             t.setDaemon(true);
             t.start();
@@ -54,18 +56,15 @@ public class Controller {
 
     }
 
-
     @FXML
     private void resetAction(ActionEvent event) {
-        label.textProperty().unbind();
-        label.setTextFill(Color.BLACK);
-        label.setText("00:00");
-        label101.setText("00:00");
-        label102.setText("00:00");
+        LStopuhr.textProperty().unbind();
+        LStopuhr.setTextFill(Color.BLACK);
+        LStopuhr.setText("00:00");
         if (currentStatus == StopWatchStatus.RUNNING) {
             stopwatchWorker.stop();
             stopwatchWorker = null;
-            startTime = null;
+            startTime = Optional.empty();
             currentStatus = StopWatchStatus.STOPPED;
         }
     }
@@ -73,6 +72,24 @@ public class Controller {
     @FXML
     private void testButton(ActionEvent event) {
         System.out.println("BLABLABLA");
+    }
+
+    // ALL!!!! ids in the fxml MUST start with lowercase!!! So refactor it mr. :)
+
+    public void startCountdowns() {
+        L00Countdown.textProperty().bind(timeSeconds.asString());
+        if (countdownTLineFirst != null) {
+            countdownTLineFirst.stop();
+        }
+        countdownTLineFirst = new Timeline();
+        countdownTLineFirst.getKeyFrames().add(
+                new KeyFrame(Duration.seconds(countdownFiveHours + 1),
+                        new KeyValue(timeSeconds, 0)));
+        countdownTLineFirst.playFromStart();
+    }
+
+    private enum StopWatchStatus {
+        STOPPED, RUNNING
     }
 }
 
