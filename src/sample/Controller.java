@@ -13,6 +13,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+
 import java.util.Optional;
 
 public class Controller {
@@ -26,9 +27,9 @@ public class Controller {
 
 
     @FXML
-    private Label L00Countdown;
+    private Label l00Countdown;
     @FXML
-    private Label LStopuhr;
+    private Label lStopuhr;
     @FXML
     private Button testB;
 
@@ -45,10 +46,10 @@ public class Controller {
         if (!startTime.isPresent()) startTime = input.showAndWait();
         if (currentStatus == StopWatchStatus.STOPPED) {
             currentStatus = StopWatchStatus.RUNNING;
-            stopwatchWorker = new StopwatchWorker(LStopuhr, startTime);
+            stopwatchWorker = new StopwatchWorker(lStopuhr, startTime);
             //  stopwatchWorker = new StopwatchWorker(label101, startTime);
             Thread t = new Thread(stopwatchWorker);
-            LStopuhr.textProperty().bind(stopwatchWorker.messageProperty());
+            lStopuhr.textProperty().bind(stopwatchWorker.messageProperty());
 
             t.setDaemon(true);
             t.start();
@@ -58,9 +59,9 @@ public class Controller {
 
     @FXML
     private void resetAction(ActionEvent event) {
-        LStopuhr.textProperty().unbind();
-        LStopuhr.setTextFill(Color.BLACK);
-        LStopuhr.setText("00:00");
+        lStopuhr.textProperty().unbind();
+        lStopuhr.setTextFill(Color.BLACK);
+        lStopuhr.setText("00:00");
         if (currentStatus == StopWatchStatus.RUNNING) {
             stopwatchWorker.stop();
             stopwatchWorker = null;
@@ -77,13 +78,15 @@ public class Controller {
     // ALL!!!! ids in the fxml MUST start with lowercase!!! So refactor it mr. :)
 
     public void startCountdowns() {
-        L00Countdown.textProperty().bind(timeSeconds.asString());
+
+        l00Countdown.textProperty().bind(timeSeconds.asString());
+
         if (countdownTLineFirst != null) {
             countdownTLineFirst.stop();
         }
         countdownTLineFirst = new Timeline();
         countdownTLineFirst.getKeyFrames().add(
-                new KeyFrame(Duration.seconds(countdownFiveHours + 1),
+                new KeyFrame(javafx.util.Duration.seconds(countdownFiveHours + 1),
                         new KeyValue(timeSeconds, 0)));
         countdownTLineFirst.playFromStart();
     }
@@ -92,5 +95,3 @@ public class Controller {
         STOPPED, RUNNING
     }
 }
-
-
