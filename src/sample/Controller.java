@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class Controller {
@@ -32,6 +33,8 @@ public class Controller {
     private Label lStopuhr;
     @FXML
     private Button testB;
+    @FXML
+    private Label lKommenZeit;
 
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
@@ -42,7 +45,10 @@ public class Controller {
 
         TextInputDialog input = new TextInputDialog("Set startCountdowns time: h:m");
         input.setTitle("Set startCountdowns time...");
+
         input.setHeaderText("Set startCountdowns time mr. primus: ");
+
+
         if (!startTime.isPresent()) startTime = input.showAndWait();
         if (currentStatus == StopWatchStatus.STOPPED) {
             currentStatus = StopWatchStatus.RUNNING;
@@ -55,6 +61,23 @@ public class Controller {
             t.start();
         }
 
+
+
+
+        lKommenZeit.setText(kommenZeit());
+
+        }
+
+
+    //Setzt das Label für die Kommenzeit.
+    public String kommenZeit(){
+
+        char[] charArray = startTime.toString().toCharArray();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(charArray[9]).append(charArray[10]).append(charArray[11]).append(charArray[12]).append(charArray[13]);
+
+        return sb.toString();
     }
 
     @FXML
@@ -90,6 +113,7 @@ public class Controller {
                         new KeyValue(timeSeconds, 0)));
         countdownTLineFirst.playFromStart();
     }
+
 
     private enum StopWatchStatus {
         STOPPED, RUNNING
