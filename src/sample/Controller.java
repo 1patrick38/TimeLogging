@@ -11,10 +11,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
-
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 public class Controller {
@@ -62,15 +61,20 @@ public class Controller {
         }
 
 
-
-
         lKommenZeit.setText(kommenZeit());
 
-        }
+    }
 
+
+    public String kommenZeit() {
+        if (startTime.isPresent() && startTime.get().matches("^[0-9]")) {
+            return startTime.get();
+        }
+        else return LocalTime.now().toString();
+    }
 
     //Setzt das Label für die Kommenzeit.
-    public String kommenZeit(){
+    public String kommenZeitOld() {
 
         char[] charArray = startTime.toString().toCharArray();
 
