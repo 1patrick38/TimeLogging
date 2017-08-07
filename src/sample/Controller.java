@@ -67,7 +67,7 @@ public class Controller {
 
 
     public String kommenZeit() {
-        if (startTime.isPresent() && startTime.get().matches("^[0-9]")) {
+        if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
             return startTime.get();
         }
         else return LocalTime.now().toString();
