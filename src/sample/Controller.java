@@ -3,6 +3,7 @@ package sample;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -11,20 +12,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Optional;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class Controller {
 
 
     private Optional<String> startTime = Optional.empty();
 
-    private int countdownFiveHours = 18000;
-    private IntegerProperty timeSeconds = new SimpleIntegerProperty(countdownFiveHours);
+    private IntegerProperty fiveHoursCount = new SimpleIntegerProperty(0);
     private Timeline countdownTLineFirst;
 
 
@@ -40,9 +40,17 @@ public class Controller {
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
 
+    public static LocalTime parseStringToTime(Optional<String> input) {
+        try {
+            String[] split = input.get().split(":");
+            return LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1]), 0);
+        } catch (Exception exception) {
+            return LocalTime.now();
+        }
+    }
+
     @FXML
     private void handleStartStop(ActionEvent event) {
-        startCountdowns();
 
         TextInputDialog input = new TextInputDialog("Set startCountdowns time: h:m");
         input.setTitle("Set startCountdowns time...");
@@ -64,27 +72,15 @@ public class Controller {
 
 
         lKommenZeit.setText(kommenZeit());
+        startCountdowns();
 
     }
-
 
     public String kommenZeit() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
             return startTime.get();
-        }
-        else return formatter.format(LocalDateTime.now());
-    }
-
-    //Setzt das Label für die Kommenzeit.
-    public String kommenZeitOld() {
-
-        char[] charArray = startTime.toString().toCharArray();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(charArray[9]).append(charArray[10]).append(charArray[11]).append(charArray[12]).append(charArray[13]);
-
-        return sb.toString();
+        } else return formatter.format(LocalDateTime.now());
     }
 
     @FXML
@@ -100,24 +96,31 @@ public class Controller {
         }
     }
 
+    // ALL!!!! ids in the fxml MUST start with lowercase!!! So refactor it mr. :)
+
     @FXML
     private void testButton(ActionEvent event) {
         System.out.println("BLABLABLA");
     }
 
-    // ALL!!!! ids in the fxml MUST start with lowercase!!! So refactor it mr. :)
-
     public void startCountdowns() {
-
-        l00Countdown.textProperty().bind(timeSeconds.asString());
+        LocalTime parsedStartTime = parseStringToTime(startTime);
+        int startTime = parsedStartTime.toSecondOfDay();
+        int currentTime = LocalTime.now().toSecondOfDay();
+        int delta = 18000 - (currentTime - startTime);
+        fiveHoursCount.setValue(delta);
+        // TODO: do some painful math here...
+        //l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(60).divide(60))
+        //        .concat(":").concat(fiveHoursCount));
+        l00Countdown.textProperty().bind(fiveHoursCount.asString());
 
         if (countdownTLineFirst != null) {
             countdownTLineFirst.stop();
         }
         countdownTLineFirst = new Timeline();
         countdownTLineFirst.getKeyFrames().add(
-                new KeyFrame(javafx.util.Duration.seconds(countdownFiveHours + 1),
-                        new KeyValue(timeSeconds, 0)));
+                new KeyFrame(javafx.util.Duration.seconds(delta + 1),
+                        new KeyValue(fiveHoursCount, 0)));
         countdownTLineFirst.playFromStart();
     }
 
