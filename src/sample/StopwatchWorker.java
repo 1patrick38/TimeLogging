@@ -51,15 +51,12 @@ public class StopwatchWorker extends Task<Void> {
 
             if (d.toMinutes() < 462) {
                 label.setTextFill(Color.DARKORANGE);
-            }
-            else if (d.toMinutes() >= 462 && d.toMinutes() < 600) {
+            } else if (d.toMinutes() >= 462 && d.toMinutes() < 600) {
                 label.setTextFill(Color.GREEN);
-            }
-            else if (d.toMinutes() >= 600 && d.toMinutes() < 720) {
+            } else if (d.toMinutes() >= 600 && d.toMinutes() < 720) {
                 label.setTextFill(Color.RED);
 
-            }
-            else if (d.toMinutes() >= 720) {
+            } else if (d.toMinutes() >= 720) {
                 label.setTextFill(Color.DARKRED);
 
             }
@@ -80,5 +77,9 @@ public class StopwatchWorker extends Task<Void> {
 
     public void stop() {
         setStop(true);
+    }
+
+    public void setStartDateTime(LocalTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 }

@@ -24,11 +24,11 @@
                     <children>
                         <HBox>
                             <children>
-                                <Label fx:id="LKommenZeit" alignment="CENTER" prefHeight="30.0" prefWidth="150.0" text="00:00" />
+                                <Label fx:id="lKommenZeit" alignment="CENTER" prefHeight="30.0" prefWidth="150.0" text="00:00" />
                                 <Label prefHeight="30.0" prefWidth="150.0" text="KommenZeit" />
                             </children>
                         </HBox>
-                        <Label fx:id="LStopuhr" alignment="CENTER" prefHeight="100.0" prefWidth="331.0" text="00:00">
+                        <Label fx:id="lStopuhr" alignment="CENTER" prefHeight="100.0" prefWidth="331.0" text="00:00">
                             <font>
                                 <Font size="72.0" />
                             </font>
@@ -48,24 +48,24 @@
                                 <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Label fx:id="L00Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="00:00" />
-                                <Label fx:id="L01Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="161.0" text="00:00" GridPane.rowIndex="1" />
+                                <Label fx:id="l00Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="176.0" text="00:00" />
+                                <Label fx:id="l01Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="161.0" text="00:00" GridPane.rowIndex="1" />
                                 <Label text="06:00 Keine Pause" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                <Label fx:id="L02Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="154.0" text="00:00" GridPane.rowIndex="2" />
+                                <Label fx:id="l02Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="154.0" text="00:00" GridPane.rowIndex="2" />
                                 <Label text="08:12 Normalarbeitszeit" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                <Label fx:id="L03Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="156.0" text="00:00" GridPane.rowIndex="3" />
+                                <Label fx:id="l03Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="156.0" text="00:00" GridPane.rowIndex="3" />
                                 <Label text="08:41 ink. Ust" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                <Label fx:id="L04Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="207.0" text="00:00" GridPane.rowIndex="4" />
+                                <Label fx:id="l04Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="207.0" text="00:00" GridPane.rowIndex="4" />
                                 <Label text="10:00 Limit" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                <Label fx:id="L05Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="195.0" text="00:00" GridPane.rowIndex="5" />
+                                <Label fx:id="l05Countdown" alignment="CENTER" prefHeight="17.0" prefWidth="195.0" text="00:00" GridPane.rowIndex="5" />
                                 <Label text="12:00 Limit" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                                 <Label text="05:00 Mindeszeit" GridPane.columnIndex="2" />
-                                <ProgressBar fx:id="PB10Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" />
-                                <ProgressBar fx:id="PB11Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <ProgressBar fx:id="PB12Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <ProgressBar fx:id="PB13Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                <ProgressBar fx:id="PB14Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                <ProgressBar fx:id="PB15Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                <ProgressBar fx:id="pB10Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" />
+                                <ProgressBar fx:id="pB11Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <ProgressBar fx:id="pB12Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <ProgressBar fx:id="pB13Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <ProgressBar fx:id="pB14Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <ProgressBar fx:id="pB15Countdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                             </children>
                         </GridPane>
                     </children>
@@ -87,16 +87,17 @@
                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.0" minWidth="10.0" prefWidth="143.0" />
                             </columnConstraints>
                             <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Label fx:id="LWoche00Count" alignment="CENTER" prefHeight="17.0" prefWidth="48.0" text="00:00" />
-                                <Label alignment="CENTER" prefHeight="17.0" prefWidth="59.0" text="00:00" GridPane.rowIndex="1" />
-                                <ProgressBar fx:id="PB10WocheCountdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" />
-                                <ProgressBar fx:id="PB11MonatCountdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <Label text="Wochensoll" GridPane.columnIndex="2" />
-                                <Label text="Monatssoll" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                <Label fx:id="lWoche00Count" alignment="CENTER" prefHeight="17.0" prefWidth="48.0" text="00:00" GridPane.rowIndex="1" />
+                                <Label alignment="CENTER" prefHeight="17.0" prefWidth="59.0" text="00:00" GridPane.rowIndex="2" />
+                                <ProgressBar fx:id="pB10WocheCountdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <ProgressBar fx:id="pB11MonatCountdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <Label text="Wochensoll" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                <Label text="Monatssoll" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                             </children>
                         </GridPane>
                         <BorderPane prefHeight="138.0" prefWidth="296.0">
@@ -110,7 +111,7 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
-                                        <Button fx:id="RButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="130.0" text="Reset">
+                                        <Button fx:id="rButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="130.0" text="Reset">
                                             <opaqueInsets>
                                                 <Insets />
                                             </opaqueInsets>
@@ -118,7 +119,7 @@
                                                 <Insets left="10.0" />
                                             </GridPane.margin>
                                         </Button>
-                                        <Button fx:id="SButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleStartStop" prefHeight="55.0" prefWidth="130.0" text="Kommen" GridPane.columnIndex="1">
+                                        <Button fx:id="sButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleStartStop" prefHeight="55.0" prefWidth="130.0" text="Kommen" GridPane.columnIndex="1">
                                             <GridPane.margin>
                                                 <Insets left="10.0" />
                                             </GridPane.margin>
