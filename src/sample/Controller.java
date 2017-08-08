@@ -12,9 +12,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.time.format.DateTimeFormatter;
 
 public class Controller {
 
@@ -67,10 +69,11 @@ public class Controller {
 
 
     public String kommenZeit() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
             return startTime.get();
         }
-        else return LocalTime.now().toString();
+        else return formatter.format(LocalDateTime.now());
     }
 
     //Setzt das Label für die Kommenzeit.

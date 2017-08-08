@@ -36,7 +36,6 @@ public class StopwatchWorker extends Task<Void> {
 
     }
 
-
     @Override
     protected Void call() throws Exception {
 
