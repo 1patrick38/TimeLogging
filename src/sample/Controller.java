@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -109,10 +110,9 @@ public class Controller {
         int currentTime = LocalTime.now().toSecondOfDay();
         int delta = 18000 - (currentTime - startTime);
         fiveHoursCount.setValue(delta);
-        // TODO: do some painful math here...
-        //l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(60).divide(60))
-        //        .concat(":").concat(fiveHoursCount));
-        l00Countdown.textProperty().bind(fiveHoursCount.asString());
+        l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(3600))
+                .concat(":").concat(getMinutesDueModuloFromSeconds(fiveHoursCount)));
+  //      l00Countdown.textProperty().bind(fiveHoursCount.asString());
 
         if (countdownTLineFirst != null) {
             countdownTLineFirst.stop();
@@ -122,6 +122,13 @@ public class Controller {
                 new KeyFrame(javafx.util.Duration.seconds(delta + 1),
                         new KeyValue(fiveHoursCount, 0)));
         countdownTLineFirst.playFromStart();
+    }
+
+    private IntegerProperty getMinutesDueModuloFromSeconds(IntegerProperty fiveHoursCount) {
+        int seconds = fiveHoursCount.intValue();
+        int i = ((seconds / 60) % 60);
+        fiveHoursCount.setValue(i);
+        return fiveHoursCount;
     }
 
 
