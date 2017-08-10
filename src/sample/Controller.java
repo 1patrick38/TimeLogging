@@ -35,6 +35,8 @@ public class Controller {
     private Button testB;
     @FXML
     private Label lKommenZeit;
+    @FXML
+    private Label lGehenZeit;
 
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
@@ -71,6 +73,7 @@ public class Controller {
 
 
         lKommenZeit.setText(kommenZeit());
+        lGehenZeit.setText(gehenZeit());
         startCountdowns();
 
     }
@@ -80,6 +83,24 @@ public class Controller {
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
             return startTime.get();
         } else return formatter.format(LocalDateTime.now());
+    }
+
+    public String gehenZeit(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
+
+            System.out.println(startTime);
+            String[] split = startTime.get().split(":");
+           // startTime = Optional.of(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1]), 0).toString());
+
+            LocalTime maximalWorking = LocalTime.now().with(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
+            maximalWorking.plusHours(10).plusMinutes(30);
+
+            System.out.println(maximalWorking);
+
+            return  formatter.format(maximalWorking.plusHours(10).plusMinutes(30));
+        }
+        else return formatter.format(LocalDateTime.now().plusHours(10).plusMinutes(30));
     }
 
     @FXML
