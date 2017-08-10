@@ -100,6 +100,9 @@ public class Controller {
         System.out.println("BLABLABLA");
     }
 
+
+    // modulo must be implemented, because the property API does not support it....
+    // a % b = a - (b * int(a/b))
     public void startCountdowns() {
         LocalTime parsedStartTime = parseStringToTime(startTime);
         int startTime = parsedStartTime.toSecondOfDay();
