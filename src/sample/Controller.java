@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -13,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -97,8 +95,6 @@ public class Controller {
         }
     }
 
-    // ALL!!!! ids in the fxml MUST start with lowercase!!! So refactor it mr. :)
-
     @FXML
     private void testButton(ActionEvent event) {
         System.out.println("BLABLABLA");
@@ -110,9 +106,8 @@ public class Controller {
         int currentTime = LocalTime.now().toSecondOfDay();
         int delta = 18000 - (currentTime - startTime);
         fiveHoursCount.setValue(delta);
-        l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(3600))
-                .concat(":").concat(getMinutesDueModuloFromSeconds(fiveHoursCount)));
-  //      l00Countdown.textProperty().bind(fiveHoursCount.asString());
+        l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(3600)).concat(":")
+                .concat(fiveHoursCount.subtract((fiveHoursCount.divide(60)).multiply(60))));
 
         if (countdownTLineFirst != null) {
             countdownTLineFirst.stop();
@@ -124,15 +119,9 @@ public class Controller {
         countdownTLineFirst.playFromStart();
     }
 
-    private IntegerProperty getMinutesDueModuloFromSeconds(IntegerProperty fiveHoursCount) {
-        int seconds = fiveHoursCount.intValue();
-        int i = ((seconds / 60) % 60);
-        fiveHoursCount.setValue(i);
-        return fiveHoursCount;
-    }
-
-
     private enum StopWatchStatus {
         STOPPED, RUNNING
     }
+
+
 }
