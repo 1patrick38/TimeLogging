@@ -174,12 +174,12 @@ public class Controller {
                 deltaTenHours,
                 deltaTwelveHours);
 
-        fiveHoursCount.addListener(observable -> pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (deltaFiveHours * 1.0))));
-        sixHoursCount.addListener(observable -> pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (deltaSixHours * 1.0))));
-        eightHoursTwelveMinCount.addListener(observable -> pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (deltaEightTwelveHours * 1.0))));
-        eightHoursFourtyCount.addListener(observable -> pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (deltaEightFourtyHours * 1.0))));
-        tenHoursCount.addListener(observable -> pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (deltaTenHours * 1.0))));
-        twelveHoursCount.addListener(observable -> pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (deltaTwelveHours * 1.0))));
+        fiveHoursCount.addListener(observable -> pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (FIVEHOURSINSECONDS * 1.0))));
+        sixHoursCount.addListener(observable -> pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (SIXHOURSINSECONDS * 1.0))));
+        eightHoursTwelveMinCount.addListener(observable -> pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (EIGHTHOURSTWELVEMINSECONDS * 1.0))));
+        eightHoursFourtyCount.addListener(observable -> pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (EIGHTHOURSFOURTYONEINSECONDS * 1.0))));
+        tenHoursCount.addListener(observable -> pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (TENHOURSINSECONDS * 1.0))));
+        twelveHoursCount.addListener(observable -> pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0))));
         startTimeLines();
     }
 
@@ -236,7 +236,7 @@ public class Controller {
     // a % b = a - (b * int(a/b))
     private NumberBinding formatMinutes(IntegerProperty hoursCount) {
         IntegerBinding divide = hoursCount.divide(60);
-        return hoursCount.subtract((divide.divide(60)).multiply(60));
+        return divide.subtract((divide.divide(60)).multiply(60));
     }
 
 
