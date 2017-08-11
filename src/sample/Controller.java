@@ -2,7 +2,6 @@ package sample;
 
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.FloatBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
@@ -40,7 +39,8 @@ public class Controller {
     private Timeline countdownFiveHours, countdownSixHours,
             countdownEightTwelveHours,
             countdownEightFourtyHours,
-            countdownTenHours, countdownTwelveHours;
+            countdownTenHours,
+            countdownTwelveHours;
 
     private Optional<String> startTime = Optional.empty();
 
@@ -149,32 +149,59 @@ public class Controller {
         int deltaEightFourtyHours = delta(EIGHTHOURSFOURTYONEINSECONDS, startTime, currentTime);
         int deltaTenHours = delta(TENHOURSINSECONDS, startTime, currentTime);
         int deltaTwelveHours = delta(TWELVEHOURSINSECONDS, startTime, currentTime);
-        fiveHoursCount.setValue(deltaFiveHours);
-        sixHoursCount.setValue(deltaSixHours);
-        eightHoursTwelveMinCount.setValue(deltaEightTwelveHours);
-        eightHoursFourtyCount.setValue(deltaEightFourtyHours);
-        tenHoursCount.setValue(deltaTenHours);
-        twelveHoursCount.setValue(deltaTwelveHours);
-        bindPropertyToValue(l00Countdown, fiveHoursCount);
-        bindPropertyToValue(l01Countdown, sixHoursCount);
-        bindPropertyToValue(l02Countdown, eightHoursTwelveMinCount);
-        bindPropertyToValue(l03Countdown, eightHoursFourtyCount);
-        bindPropertyToValue(l04Countdown, tenHoursCount);
-        bindPropertyToValue(l05Countdown, twelveHoursCount);
+        setPropertyInitialValues(deltaFiveHours,
+                deltaSixHours,
+                deltaEightTwelveHours,
+                deltaEightFourtyHours,
+                deltaTenHours,
+                deltaTwelveHours);
 
+        bindPropertiesToValues();
 
+        createTimeLines(deltaFiveHours,
+                deltaSixHours,
+                deltaEightTwelveHours,
+                deltaEightFourtyHours,
+                deltaTenHours,
+                deltaTwelveHours);
+
+        startTimeLines();
+    }
+
+    private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
         countdownFiveHours = TimeLineFactory.get(deltaFiveHours, fiveHoursCount);
         countdownSixHours = TimeLineFactory.get(deltaSixHours, sixHoursCount);
         countdownEightTwelveHours = TimeLineFactory.get(deltaEightTwelveHours, eightHoursTwelveMinCount);
         countdownEightFourtyHours = TimeLineFactory.get(deltaEightFourtyHours, eightHoursFourtyCount);
         countdownTenHours = TimeLineFactory.get(deltaTenHours, tenHoursCount);
         countdownTwelveHours = TimeLineFactory.get(deltaTwelveHours, twelveHoursCount);
+    }
+
+    private void startTimeLines() {
         countdownFiveHours.playFromStart();
         countdownSixHours.playFromStart();
         countdownEightTwelveHours.playFromStart();
         countdownEightFourtyHours.playFromStart();
         countdownTenHours.playFromStart();
         countdownTwelveHours.playFromStart();
+    }
+
+    private void setPropertyInitialValues(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
+        fiveHoursCount.setValue(deltaFiveHours);
+        sixHoursCount.setValue(deltaSixHours);
+        eightHoursTwelveMinCount.setValue(deltaEightTwelveHours);
+        eightHoursFourtyCount.setValue(deltaEightFourtyHours);
+        tenHoursCount.setValue(deltaTenHours);
+        twelveHoursCount.setValue(deltaTwelveHours);
+    }
+
+    private void bindPropertiesToValues() {
+        bindPropertyToValue(l00Countdown, fiveHoursCount);
+        bindPropertyToValue(l01Countdown, sixHoursCount);
+        bindPropertyToValue(l02Countdown, eightHoursTwelveMinCount);
+        bindPropertyToValue(l03Countdown, eightHoursFourtyCount);
+        bindPropertyToValue(l04Countdown, tenHoursCount);
+        bindPropertyToValue(l05Countdown, twelveHoursCount);
     }
 
     private void bindPropertyToValue(Label label, IntegerProperty hoursCount) {
