@@ -1,7 +1,5 @@
 package sample;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
@@ -14,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
+import util.TimeLineFactory;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,16 +21,35 @@ import java.util.Optional;
 
 public class Controller {
 
+    private static final int SECONDSOFHOUR = 3600;
+    private final static int FIVEHOURSINSECONDS = 18000;
+    private final static int SIXHOURSINSECONDS = 21600;
+    private final static int EIGHTHOURSTWELVEMINSECONDS = 28812;
+    private final static int EIGHTHOURSFOURTYONEINSECONDS = 28841;
+    private final static int TENHOURSINSECONDS = 36000;
+    private final static int TWELVEHOURSINSECONDS = 43200;
+    
+    private IntegerProperty fiveHoursCount = new SimpleIntegerProperty();
+    private IntegerProperty sixHoursCount = new SimpleIntegerProperty();
+    private IntegerProperty eightHoursTwelveMinCount = new SimpleIntegerProperty();
+    private IntegerProperty eightHoursFourtyCount = new SimpleIntegerProperty();
+    private IntegerProperty tenHoursCount = new SimpleIntegerProperty();
+    private IntegerProperty twelveHoursCount = new SimpleIntegerProperty();
+
+    private Timeline countdownFiveHours, countdownSixHours,
+            countdownEightTwelveHours,
+            countdownEightFourtyHours,
+            countdownTenHours, countdownTwelveHours;
 
     private Optional<String> startTime = Optional.empty();
 
-    private IntegerProperty fiveHoursCount = new SimpleIntegerProperty(0);
-    private Timeline countdownFiveHours;
-    private final static int FIVEHOURSINSECONDS =18000;
-
-
     @FXML
-    private Label l00Countdown;
+    private Label l00Countdown,
+            l01Countdown,
+            l02Countdown,
+            l03Countdown,
+            l04Countdown,
+            l05Countdown;
     @FXML
     private Label lStopuhr;
     @FXML
@@ -40,11 +58,11 @@ public class Controller {
     private Label lKommenZeit;
     @FXML
     private Label lGehenZeit;
-
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
 
-    public static LocalTime parseStringToTime(Optional<String> input) {
+
+    private static LocalTime parseStringToTime(Optional<String> input) {
         try {
             String[] split = input.get().split(":");
             return LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1]), 0);
@@ -66,7 +84,6 @@ public class Controller {
         if (currentStatus == StopWatchStatus.STOPPED) {
             currentStatus = StopWatchStatus.RUNNING;
             stopwatchWorker = new StopwatchWorker(lStopuhr, startTime);
-            //  stopwatchWorker = new StopwatchWorker(label101, startTime);
             Thread t = new Thread(stopwatchWorker);
             lStopuhr.textProperty().bind(stopwatchWorker.messageProperty());
 
@@ -99,8 +116,6 @@ public class Controller {
             LocalTime maximalWorking = LocalTime.now().with(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
             maximalWorking.plusHours(10).plusMinutes(30);
 
-            System.out.println(maximalWorking);
-
             return formatter.format(maximalWorking.plusHours(10).plusMinutes(30));
         } else return formatter.format(LocalDateTime.now().plusHours(10).plusMinutes(30));
     }
@@ -120,43 +135,47 @@ public class Controller {
 
     @FXML
     private void testButton(ActionEvent event) {
-        System.out.println("BLABLABLA");
     }
 
 
-    // modulo must be implemented, because the property API does not support it....
-    // a % b = a - (b * int(a/b))
     public void startCountdowns() {
         LocalTime parsedStartTime = parseStringToTime(startTime);
         int startTime = parsedStartTime.toSecondOfDay();
         int currentTime = LocalTime.now().toSecondOfDay();
-        int deltaFiveHours = deltaFiveHours(startTime, currentTime);
+        int deltaFiveHours = delta(FIVEHOURSINSECONDS, startTime, currentTime);
+        int deltaSixHours = delta(SIXHOURSINSECONDS, startTime, currentTime);
         fiveHoursCount.setValue(deltaFiveHours);
-        l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(3600)).concat(":")
-                .concat(formatMinutes(fiveHoursCount)));
+        sixHoursCount.setValue(deltaSixHours);
+        bindPropertyToValue(l00Countdown, fiveHoursCount);
+        bindPropertyToValue(l01Countdown, sixHoursCount);
 
-        if (countdownFiveHours != null) {
-            countdownFiveHours.stop();
-        }
-        countdownFiveHours = new Timeline();
-        countdownFiveHours.getKeyFrames().add(
-                new KeyFrame(javafx.util.Duration.seconds(deltaFiveHours + 1),
-                        new KeyValue(fiveHoursCount, 0)));
+
+        countdownFiveHours = TimeLineFactory.get(deltaFiveHours, fiveHoursCount);
+        countdownSixHours = TimeLineFactory.get(deltaSixHours, sixHoursCount);
         countdownFiveHours.playFromStart();
+        countdownSixHours.playFromStart();
     }
 
-    private int deltaFiveHours(int startTime, int currentTime) {
-        return FIVEHOURSINSECONDS - (currentTime - startTime);
+    private void bindPropertyToValue(Label label, IntegerProperty hoursCount) {
+        label.textProperty().bind(Bindings.concat(hoursCount.divide(SECONDSOFHOUR)).concat(":")
+                .concat(formatMinutes(hoursCount)));
     }
 
-    private NumberBinding formatMinutes(IntegerProperty fiveHoursCount) {
-        IntegerBinding divide = fiveHoursCount.divide(60);
+    private int delta(int duration, int startTime, int currentTime) {
+        return duration - (currentTime - startTime);
+    }
+
+    // modulo must be implemented, because the property API does not support it....
+    // a % b = a - (b * int(a/b))
+
+    private NumberBinding formatMinutes(IntegerProperty hoursCount) {
+        IntegerBinding divide = hoursCount.divide(60);
         return divide.subtract((divide.divide(60)).multiply(60));
     }
+
 
     private enum StopWatchStatus {
         STOPPED, RUNNING
     }
-
 
 }
