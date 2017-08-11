@@ -2,6 +2,7 @@ package sample;
 
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.FloatBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
@@ -24,11 +25,11 @@ public class Controller {
     private static final int SECONDSOFHOUR = 3600;
     private final static int FIVEHOURSINSECONDS = 18000;
     private final static int SIXHOURSINSECONDS = 21600;
-    private final static int EIGHTHOURSTWELVEMINSECONDS = 28812;
-    private final static int EIGHTHOURSFOURTYONEINSECONDS = 28841;
+    private final static int EIGHTHOURSTWELVEMINSECONDS = 29520;
+    private final static int EIGHTHOURSFOURTYONEINSECONDS = 31260;
     private final static int TENHOURSINSECONDS = 36000;
     private final static int TWELVEHOURSINSECONDS = 43200;
-    
+
     private IntegerProperty fiveHoursCount = new SimpleIntegerProperty();
     private IntegerProperty sixHoursCount = new SimpleIntegerProperty();
     private IntegerProperty eightHoursTwelveMinCount = new SimpleIntegerProperty();
@@ -144,16 +145,36 @@ public class Controller {
         int currentTime = LocalTime.now().toSecondOfDay();
         int deltaFiveHours = delta(FIVEHOURSINSECONDS, startTime, currentTime);
         int deltaSixHours = delta(SIXHOURSINSECONDS, startTime, currentTime);
+        int deltaEightTwelveHours = delta(EIGHTHOURSTWELVEMINSECONDS, startTime, currentTime);
+        int deltaEightFourtyHours = delta(EIGHTHOURSFOURTYONEINSECONDS, startTime, currentTime);
+        int deltaTenHours = delta(TENHOURSINSECONDS, startTime, currentTime);
+        int deltaTwelveHours = delta(TWELVEHOURSINSECONDS, startTime, currentTime);
         fiveHoursCount.setValue(deltaFiveHours);
         sixHoursCount.setValue(deltaSixHours);
+        eightHoursTwelveMinCount.setValue(deltaEightTwelveHours);
+        eightHoursFourtyCount.setValue(deltaEightFourtyHours);
+        tenHoursCount.setValue(deltaTenHours);
+        twelveHoursCount.setValue(deltaTwelveHours);
         bindPropertyToValue(l00Countdown, fiveHoursCount);
         bindPropertyToValue(l01Countdown, sixHoursCount);
+        bindPropertyToValue(l02Countdown, eightHoursTwelveMinCount);
+        bindPropertyToValue(l03Countdown, eightHoursFourtyCount);
+        bindPropertyToValue(l04Countdown, tenHoursCount);
+        bindPropertyToValue(l05Countdown, twelveHoursCount);
 
 
         countdownFiveHours = TimeLineFactory.get(deltaFiveHours, fiveHoursCount);
         countdownSixHours = TimeLineFactory.get(deltaSixHours, sixHoursCount);
+        countdownEightTwelveHours = TimeLineFactory.get(deltaEightTwelveHours, eightHoursTwelveMinCount);
+        countdownEightFourtyHours = TimeLineFactory.get(deltaEightFourtyHours, eightHoursFourtyCount);
+        countdownTenHours = TimeLineFactory.get(deltaTenHours, tenHoursCount);
+        countdownTwelveHours = TimeLineFactory.get(deltaTwelveHours, twelveHoursCount);
         countdownFiveHours.playFromStart();
         countdownSixHours.playFromStart();
+        countdownEightTwelveHours.playFromStart();
+        countdownEightFourtyHours.playFromStart();
+        countdownTenHours.playFromStart();
+        countdownTwelveHours.playFromStart();
     }
 
     private void bindPropertyToValue(Label label, IntegerProperty hoursCount) {
@@ -167,7 +188,6 @@ public class Controller {
 
     // modulo must be implemented, because the property API does not support it....
     // a % b = a - (b * int(a/b))
-
     private NumberBinding formatMinutes(IntegerProperty hoursCount) {
         IntegerBinding divide = hoursCount.divide(60);
         return divide.subtract((divide.divide(60)).multiply(60));
