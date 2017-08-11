@@ -114,6 +114,9 @@ public class Controller {
         } else return formatter.format(LocalDateTime.now());
     }
 
+    // hol dir die Zeit direct von der parseStringToTime methode. Der if zweig hier darf nur eine Zeile lang sein ;)
+    // In dieser Klasse wird DateTimeFormatter zweimal genau gleich instanziert --> hier kann man refactoren
+    // die Prüfung im if von kommenZeit ist 1:1 wie die von gehenZeit --> indiz dass man hier was zusammenfassen kann
     public String gehenZeit() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
