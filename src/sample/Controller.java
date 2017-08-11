@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.paint.Color;
 import util.TimeLineFactory;
@@ -51,6 +52,13 @@ public class Controller {
             l03Countdown,
             l04Countdown,
             l05Countdown;
+    @FXML
+    private ProgressBar pB10Countdown,
+            pB11Countdown,
+            pB12Countdown,
+            pB13Countdown,
+            pB14Countdown,
+            pB15Countdown;
     @FXML
     private Label lStopuhr;
     @FXML
@@ -149,6 +157,7 @@ public class Controller {
         int deltaEightFourtyHours = delta(EIGHTHOURSFOURTYONEINSECONDS, startTime, currentTime);
         int deltaTenHours = delta(TENHOURSINSECONDS, startTime, currentTime);
         int deltaTwelveHours = delta(TWELVEHOURSINSECONDS, startTime, currentTime);
+
         setPropertyInitialValues(deltaFiveHours,
                 deltaSixHours,
                 deltaEightTwelveHours,
@@ -165,7 +174,17 @@ public class Controller {
                 deltaTenHours,
                 deltaTwelveHours);
 
+        fiveHoursCount.addListener(observable -> pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (deltaFiveHours * 1.0))));
+        sixHoursCount.addListener(observable -> pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (deltaSixHours * 1.0))));
+        eightHoursTwelveMinCount.addListener(observable -> pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (deltaEightTwelveHours * 1.0))));
+        eightHoursFourtyCount.addListener(observable -> pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (deltaEightFourtyHours * 1.0))));
+        tenHoursCount.addListener(observable -> pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (deltaTenHours * 1.0))));
+        twelveHoursCount.addListener(observable -> pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (deltaTwelveHours * 1.0))));
         startTimeLines();
+    }
+
+    private NumberBinding foo(IntegerProperty fiveHoursCount, int deltaFiveHours) {
+        return fiveHoursCount.divide(deltaFiveHours).add(0.1);
     }
 
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
@@ -217,7 +236,7 @@ public class Controller {
     // a % b = a - (b * int(a/b))
     private NumberBinding formatMinutes(IntegerProperty hoursCount) {
         IntegerBinding divide = hoursCount.divide(60);
-        return divide.subtract((divide.divide(60)).multiply(60));
+        return hoursCount.subtract((divide.divide(60)).multiply(60));
     }
 
 
