@@ -182,7 +182,7 @@ public class Controller {
         twelveHoursCount.addListener(observable -> pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0))));
         startTimeLines();
     }
-    
+
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
         countdownFiveHours = TimeLineFactory.get(deltaFiveHours, fiveHoursCount);
         countdownSixHours = TimeLineFactory.get(deltaSixHours, sixHoursCount);
@@ -220,7 +220,7 @@ public class Controller {
     }
 
     private void bindPropertyToValue(Label label, IntegerProperty hoursCount) {
-        label.textProperty().bind(Bindings.concat(hoursCount.divide(SECONDSOFHOUR)).concat(":")
+        label.textProperty().bind(Bindings.concat(String.format("%02d", hoursCount.divide(SECONDSOFHOUR).get())).concat(":")
                 .concat(formatMinutes(hoursCount)));
     }
 
