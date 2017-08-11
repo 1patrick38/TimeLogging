@@ -4,6 +4,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -24,7 +26,8 @@ public class Controller {
     private Optional<String> startTime = Optional.empty();
 
     private IntegerProperty fiveHoursCount = new SimpleIntegerProperty(0);
-    private Timeline countdownTLineFirst;
+    private Timeline countdownFiveHours;
+    private final static int FIVEHOURSINSECONDS =18000;
 
 
     @FXML
@@ -85,22 +88,21 @@ public class Controller {
         } else return formatter.format(LocalDateTime.now());
     }
 
-    public String gehenZeit(){
+    public String gehenZeit() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
 
             System.out.println(startTime);
             String[] split = startTime.get().split(":");
-           // startTime = Optional.of(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1]), 0).toString());
+            // startTime = Optional.of(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1]), 0).toString());
 
             LocalTime maximalWorking = LocalTime.now().with(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
             maximalWorking.plusHours(10).plusMinutes(30);
 
             System.out.println(maximalWorking);
 
-            return  formatter.format(maximalWorking.plusHours(10).plusMinutes(30));
-        }
-        else return formatter.format(LocalDateTime.now().plusHours(10).plusMinutes(30));
+            return formatter.format(maximalWorking.plusHours(10).plusMinutes(30));
+        } else return formatter.format(LocalDateTime.now().plusHours(10).plusMinutes(30));
     }
 
     @FXML
@@ -128,19 +130,28 @@ public class Controller {
         LocalTime parsedStartTime = parseStringToTime(startTime);
         int startTime = parsedStartTime.toSecondOfDay();
         int currentTime = LocalTime.now().toSecondOfDay();
-        int delta = 18000 - (currentTime - startTime);
-        fiveHoursCount.setValue(delta);
+        int deltaFiveHours = deltaFiveHours(startTime, currentTime);
+        fiveHoursCount.setValue(deltaFiveHours);
         l00Countdown.textProperty().bind(Bindings.concat(fiveHoursCount.divide(3600)).concat(":")
-                .concat(fiveHoursCount.subtract((fiveHoursCount.divide(60)).multiply(60))));
+                .concat(formatMinutes(fiveHoursCount)));
 
-        if (countdownTLineFirst != null) {
-            countdownTLineFirst.stop();
+        if (countdownFiveHours != null) {
+            countdownFiveHours.stop();
         }
-        countdownTLineFirst = new Timeline();
-        countdownTLineFirst.getKeyFrames().add(
-                new KeyFrame(javafx.util.Duration.seconds(delta + 1),
+        countdownFiveHours = new Timeline();
+        countdownFiveHours.getKeyFrames().add(
+                new KeyFrame(javafx.util.Duration.seconds(deltaFiveHours + 1),
                         new KeyValue(fiveHoursCount, 0)));
-        countdownTLineFirst.playFromStart();
+        countdownFiveHours.playFromStart();
+    }
+
+    private int deltaFiveHours(int startTime, int currentTime) {
+        return FIVEHOURSINSECONDS - (currentTime - startTime);
+    }
+
+    private NumberBinding formatMinutes(IntegerProperty fiveHoursCount) {
+        IntegerBinding divide = fiveHoursCount.divide(60);
+        return divide.subtract((divide.divide(60)).multiply(60));
     }
 
     private enum StopWatchStatus {
