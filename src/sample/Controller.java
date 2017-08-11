@@ -182,11 +182,7 @@ public class Controller {
         twelveHoursCount.addListener(observable -> pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0))));
         startTimeLines();
     }
-
-    private NumberBinding foo(IntegerProperty fiveHoursCount, int deltaFiveHours) {
-        return fiveHoursCount.divide(deltaFiveHours).add(0.1);
-    }
-
+    
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
         countdownFiveHours = TimeLineFactory.get(deltaFiveHours, fiveHoursCount);
         countdownSixHours = TimeLineFactory.get(deltaSixHours, sixHoursCount);
