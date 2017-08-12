@@ -70,6 +70,9 @@ public class Controller {
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
 
+    @FXML
+    private Label lUhrzeit;
+
 
     private static LocalTime parseStringToTime(Optional<String> input) {
         try {
@@ -103,8 +106,16 @@ public class Controller {
 
         lKommenZeit.setText(kommenZeit());
         lGehenZeit.setText(gehenZeit());
+
+        lUhrzeit.setText(uhrZeit());
+
         startCountdowns();
 
+    }
+
+    public String uhrZeit() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return formatter.format(LocalDateTime.now());
     }
 
     public String kommenZeit() {
@@ -151,6 +162,8 @@ public class Controller {
 
 
     public void startCountdowns() {
+
+
         LocalTime parsedStartTime = parseStringToTime(startTime);
         int startTime = parsedStartTime.toSecondOfDay();
         int currentTime = LocalTime.now().toSecondOfDay();
