@@ -3,6 +3,9 @@
 # Log file
 *.log
 
+#out
+out/*
+
 # idea files
 .idea/*
 
