@@ -238,6 +238,10 @@ public class Controller {
         return divide.subtract((divide.divide(60)).multiply(60));
     }
 
+    public void foo() {
+        System.out.println("blääääääääää");
+    }
+
 
     private enum StopWatchStatus {
         STOPPED, RUNNING
