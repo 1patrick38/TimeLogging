@@ -14,6 +14,7 @@ public class DataBase {
 
     // TODO: rename table
     public static void saveOnClose(String gehen, String kommen, String zeit, String tag) {
+        if(zeit.equalsIgnoreCase("00:00")) return;
         try {
             Class.forName("org.h2.Driver");
             Connection con = DriverManager.getConnection("jdbc:h2:~/test", "test", "");
