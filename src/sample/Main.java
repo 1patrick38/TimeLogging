@@ -17,15 +17,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         URL url = new File("src/sample/test.fxml").toURL();
-//        Parent root = FXMLLoader.load(url);
         FXMLLoader loader = new FXMLLoader(url);
-        Parent root = (Parent)loader.load();
-        Controller controller = (Controller)loader.getController();
+        Parent root = loader.load();
+        Controller controller = loader.getController();
         primaryStage.setTitle("TimeLogging");
         primaryStage.setScene(new Scene(root));
         controller.initializeTableView();
         primaryStage.show();
-        primaryStage.setOnHiding(event -> controller.foo());
+        primaryStage.setOnHiding(event -> controller.saveData());
     }
 
 

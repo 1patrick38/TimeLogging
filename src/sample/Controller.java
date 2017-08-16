@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import util.DataBase;
 import util.TimeLineFactory;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -257,9 +258,11 @@ public class Controller {
         table.getItems().setAll(DataBase.readData());
     }
 
-    public void foo() {
-        System.out.println("label: " + lKommenZeit);
-        System.out.println("label: " + lGehenZeit);
+    public void saveData() {
+        DataBase.saveOnClose(lGehenZeit.getText(),
+                lKommenZeit.getText(),
+                lStopuhr.getText(),
+                LocalDate.now().getDayOfWeek().toString());
     }
 
 
