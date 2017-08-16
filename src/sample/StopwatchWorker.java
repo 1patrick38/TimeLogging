@@ -16,8 +16,6 @@ public class StopwatchWorker extends Task<Void> {
     private LocalTime startDateTime;
     private LocalTime stopDateTime;
     private Label label;
-    private Label label101;
-    private Label label102;
     private Optional<String> startTime;
 
     StopwatchWorker(Label label, Optional<String> startTime) {
