@@ -247,7 +247,7 @@ public class Controller {
     }
 
     private void bindPropertyToValue(Label label, IntegerProperty hoursCount) {
-        label.textProperty().bind(Bindings.concat(String.format("%02d", hoursCount.divide(SECONDSOFHOUR).get())).concat(":")
+        label.textProperty().bind(Bindings.concat(String.format("%02d", foo(hoursCount))).concat(":")
                 .concat(formatMinutes(hoursCount)));
     }
 
@@ -260,6 +260,10 @@ public class Controller {
     private NumberBinding formatMinutes(IntegerProperty hoursCount) {
         IntegerBinding divide = hoursCount.divide(60);
         return divide.subtract((divide.divide(60)).multiply(60));
+    }
+    private int foo(IntegerProperty hours) {
+        if(hours.get()%3600 == 0) return hours.divide(SECONDSOFHOUR).subtract(1).get();
+        return hours.divide(SECONDSOFHOUR).get();
     }
 
     public void initializeTableView() {
