@@ -13,9 +13,9 @@ public class DbConnectionTest {
             Connection con = DriverManager.getConnection("jdbc:h2:~/test", "test", "");
             Statement stmt = con.createStatement();
             //stmt.executeUpdate( "DROP TABLE table1" );
-            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS table1 (id bigint auto_increment, day varchar(10), start varchar(20), end varchar(20) )");
-            stmt.executeUpdate("INSERT INTO table1(day,start,end) VALUES ( 'Montag', '10:00','12:00' )");
-            stmt.executeUpdate("INSERT INTO table1(day,start,end) VALUES ( 'Dienstag', '11:00','12:00' )");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS table1 (id bigint auto_increment, day varchar(10), start varchar(20), end varchar(20), time varchar(20) )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( 'Montag', '10:00','12:00', '02:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( 'Dienstag', '11:00','12:00', '01:00' )");
 
             ResultSet rs = stmt.executeQuery("SELECT * FROM table1");
 
@@ -30,7 +30,7 @@ public class DbConnectionTest {
                 System.out.println("Row added " + row);
             }
             System.out.println(data);
-            stmt.execute("DROP ALL OBJECTS");
+//            stmt.execute("DROP ALL OBJECTS");
             stmt.close();
             con.close();
 

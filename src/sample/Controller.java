@@ -8,11 +8,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
+import util.DataBase;
 import util.TimeLineFactory;
 
 import java.time.LocalDateTime;
@@ -67,6 +66,17 @@ public class Controller {
     private Label lKommenZeit;
     @FXML
     private Label lGehenZeit;
+    @FXML
+    private TableView<TimeRecord> table;
+    @FXML
+    private TableColumn<TimeRecord, String> tableDate;
+    @FXML
+    private TableColumn<TimeRecord, String> tableKommen;
+    @FXML
+    private TableColumn<TimeRecord, String> tableGehen;
+    @FXML
+    private TableColumn<TimeRecord, String> tableZeit;
+
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
 
@@ -238,8 +248,18 @@ public class Controller {
         return divide.subtract((divide.divide(60)).multiply(60));
     }
 
+    public void initializeTableView() {
+        tableDate.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("datum"));
+        tableKommen.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("kommen"));
+        tableGehen.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("gehen"));
+        tableZeit.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("zeit"));
+
+        table.getItems().setAll(DataBase.readData());
+    }
+
     public void foo() {
-        System.out.println("blääääääääää");
+        System.out.println("label: " + lKommenZeit);
+        System.out.println("label: " + lGehenZeit);
     }
 
 

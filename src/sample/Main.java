@@ -23,6 +23,7 @@ public class Main extends Application {
         Controller controller = (Controller)loader.getController();
         primaryStage.setTitle("TimeLogging");
         primaryStage.setScene(new Scene(root));
+        controller.initializeTableView();
         primaryStage.show();
         primaryStage.setOnHiding(event -> controller.foo());
     }
