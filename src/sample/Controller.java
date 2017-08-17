@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
@@ -11,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import util.DataBase;
 import util.TimeLineFactory;
 
@@ -18,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Optional;
 
 public class Controller {
@@ -118,15 +122,22 @@ public class Controller {
         lKommenZeit.setText(kommenZeit());
         lGehenZeit.setText(gehenZeit());
 
-        lUhrzeit.setText(uhrZeit());
-
         startCountdowns();
 
     }
 
-    public String uhrZeit() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return formatter.format(LocalDateTime.now());
+    public void initClock() {
+        Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
+            Calendar cal = Calendar.getInstance();
+            int second = cal.get(Calendar.SECOND);
+            int minute = cal.get(Calendar.MINUTE);
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+            lUhrzeit.setText(hour + ":" + (minute) + ":" + second);
+        }),
+                new KeyFrame(Duration.seconds(1))
+        );
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
     }
 
     public String kommenZeit() {

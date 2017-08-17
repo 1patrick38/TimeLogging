@@ -23,6 +23,7 @@ public class Main extends Application {
         primaryStage.setTitle("TimeLogging");
         primaryStage.setScene(new Scene(root));
         controller.initializeTableView();
+        controller.initClock();
         primaryStage.show();
         primaryStage.setOnHiding(event -> controller.saveData());
     }
