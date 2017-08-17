@@ -132,7 +132,7 @@ public class Controller {
             int second = cal.get(Calendar.SECOND);
             int minute = cal.get(Calendar.MINUTE);
             int hour = cal.get(Calendar.HOUR_OF_DAY);
-            lUhrzeit.setText(hour + ":" + (minute) + ":" + second);
+            lUhrzeit.setText(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
         }),
                 new KeyFrame(Duration.seconds(1))
         );
@@ -272,8 +272,9 @@ public class Controller {
         IntegerBinding divide = hoursCount.divide(60);
         return divide.subtract((divide.divide(60)).multiply(60));
     }
+
     private int foo(IntegerProperty hours) {
-        if(hours.get()%3600 == 0) return hours.divide(SECONDSOFHOUR).subtract(1).get();
+        if (hours.get() % 3600 == 0) return hours.divide(SECONDSOFHOUR).subtract(1).get();
         return hours.divide(SECONDSOFHOUR).get();
     }
 
