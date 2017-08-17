@@ -209,29 +209,33 @@ public class Controller {
 
         fiveHoursCount.addListener(observable -> {
             pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (FIVEHOURSINSECONDS * 1.0)));
-            l00Countdown.setText(String.format("%02d", formatHours(fiveHoursCount.get())) + ":" + String.format("%02d", (fiveHoursCount.get() / 60) % 60));
+            setLabelText(l00Countdown, fiveHoursCount.get());
         });
         sixHoursCount.addListener(observable -> {
             pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (SIXHOURSINSECONDS * 1.0)));
-            l01Countdown.setText(String.format("%02d", formatHours(sixHoursCount.get())) + ":" + String.format("%02d", (sixHoursCount.get() / 60) % 60));
+            setLabelText(l01Countdown, sixHoursCount.get());
         });
         eightHoursTwelveMinCount.addListener(observable -> {
             pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (EIGHTHOURSTWELVEMINSECONDS * 1.0)));
-            l02Countdown.setText(String.format("%02d", formatHours(eightHoursTwelveMinCount.get())) + ":" + String.format("%02d", (eightHoursTwelveMinCount.get() / 60) % 60));
+            setLabelText(l02Countdown, eightHoursTwelveMinCount.get());
         });
         eightHoursFourtyCount.addListener(observable -> {
             pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (EIGHTHOURSFOURTYONEINSECONDS * 1.0)));
-            l03Countdown.setText(String.format("%02d", formatHours(eightHoursFourtyCount.get())) + ":" + String.format("%02d", (eightHoursFourtyCount.get() / 60) % 60));
+            setLabelText(l03Countdown, eightHoursFourtyCount.get());
         });
         tenHoursCount.addListener(observable -> {
             pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (TENHOURSINSECONDS * 1.0)));
-            l04Countdown.setText(String.format("%02d", formatHours(tenHoursCount.get())) + ":" + String.format("%02d", (tenHoursCount.get() / 60) % 60));
+            setLabelText(l04Countdown, tenHoursCount.get());
         });
         twelveHoursCount.addListener(observable -> {
             pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0)));
-            l05Countdown.setText(String.format("%02d", formatHours(twelveHoursCount.get())) + ":" + String.format("%02d", (twelveHoursCount.get() / 60) % 60));
+            setLabelText(l05Countdown, twelveHoursCount.get());
         });
         startTimeLines();
+    }
+
+    private void setLabelText(Label label, int hours) {
+        label.setText(String.format("%02d", formatHours(hours)) + ":" + String.format("%02d", (hours / 60) % 60));
     }
 
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
