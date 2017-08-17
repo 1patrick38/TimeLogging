@@ -3,9 +3,6 @@ package sample;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.IntegerBinding;
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -203,8 +200,6 @@ public class Controller {
                 deltaTenHours,
                 deltaTwelveHours);
 
-        bindPropertiesToValues();
-
         createTimeLines(deltaFiveHours,
                 deltaSixHours,
                 deltaEightTwelveHours,
@@ -212,12 +207,30 @@ public class Controller {
                 deltaTenHours,
                 deltaTwelveHours);
 
-        fiveHoursCount.addListener(observable -> pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (FIVEHOURSINSECONDS * 1.0))));
-        sixHoursCount.addListener(observable -> pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (SIXHOURSINSECONDS * 1.0))));
-        eightHoursTwelveMinCount.addListener(observable -> pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (EIGHTHOURSTWELVEMINSECONDS * 1.0))));
-        eightHoursFourtyCount.addListener(observable -> pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (EIGHTHOURSFOURTYONEINSECONDS * 1.0))));
-        tenHoursCount.addListener(observable -> pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (TENHOURSINSECONDS * 1.0))));
-        twelveHoursCount.addListener(observable -> pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0))));
+        fiveHoursCount.addListener(observable -> {
+            pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (FIVEHOURSINSECONDS * 1.0)));
+            l00Countdown.setText(String.format("%02d", formatHours(fiveHoursCount.get())) + ":" + String.format("%02d", (fiveHoursCount.get() / 60) % 60));
+        });
+        sixHoursCount.addListener(observable -> {
+            pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (SIXHOURSINSECONDS * 1.0)));
+            l01Countdown.setText(String.format("%02d", formatHours(sixHoursCount.get())) + ":" + String.format("%02d", (sixHoursCount.get() / 60) % 60));
+        });
+        eightHoursTwelveMinCount.addListener(observable -> {
+            pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (EIGHTHOURSTWELVEMINSECONDS * 1.0)));
+            l02Countdown.setText(String.format("%02d", formatHours(eightHoursTwelveMinCount.get())) + ":" + String.format("%02d", (eightHoursTwelveMinCount.get() / 60) % 60));
+        });
+        eightHoursFourtyCount.addListener(observable -> {
+            pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (EIGHTHOURSFOURTYONEINSECONDS * 1.0)));
+            l03Countdown.setText(String.format("%02d", formatHours(eightHoursFourtyCount.get())) + ":" + String.format("%02d", (eightHoursFourtyCount.get() / 60) % 60));
+        });
+        tenHoursCount.addListener(observable -> {
+            pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (TENHOURSINSECONDS * 1.0)));
+            l04Countdown.setText(String.format("%02d", formatHours(tenHoursCount.get())) + ":" + String.format("%02d", (tenHoursCount.get() / 60) % 60));
+        });
+        twelveHoursCount.addListener(observable -> {
+            pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0)));
+            l05Countdown.setText(String.format("%02d", formatHours(twelveHoursCount.get())) + ":" + String.format("%02d", (twelveHoursCount.get() / 60) % 60));
+        });
         startTimeLines();
     }
 
@@ -248,34 +261,15 @@ public class Controller {
         twelveHoursCount.setValue(deltaTwelveHours);
     }
 
-    private void bindPropertiesToValues() {
-        bindPropertyToValue(l00Countdown, fiveHoursCount);
-        bindPropertyToValue(l01Countdown, sixHoursCount);
-        bindPropertyToValue(l02Countdown, eightHoursTwelveMinCount);
-        bindPropertyToValue(l03Countdown, eightHoursFourtyCount);
-        bindPropertyToValue(l04Countdown, tenHoursCount);
-        bindPropertyToValue(l05Countdown, twelveHoursCount);
-    }
-
-    private void bindPropertyToValue(Label label, IntegerProperty hoursCount) {
-        label.textProperty().bind(Bindings.concat(String.format("%02d", foo(hoursCount))).concat(":")
-                .concat(formatMinutes(hoursCount)));
-    }
 
     private int delta(int duration, int startTime, int currentTime) {
         return duration - (currentTime - startTime);
     }
 
-    // modulo must be implemented, because the property API does not support it....
-    // a % b = a - (b * int(a/b))
-    private NumberBinding formatMinutes(IntegerProperty hoursCount) {
-        IntegerBinding divide = hoursCount.divide(60);
-        return divide.subtract((divide.divide(60)).multiply(60));
-    }
 
-    private int foo(IntegerProperty hours) {
-        if (hours.get() % 3600 == 0) return hours.divide(SECONDSOFHOUR).subtract(1).get();
-        return hours.divide(SECONDSOFHOUR).get();
+    private int formatHours(int hours) {
+        if (hours % 3600 == 0) return hours / SECONDSOFHOUR - 1;
+        return hours / SECONDSOFHOUR;
     }
 
     public void initializeTableView() {
