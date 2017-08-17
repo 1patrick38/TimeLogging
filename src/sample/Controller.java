@@ -14,6 +14,7 @@ import javafx.util.Duration;
 import util.DataBase;
 import util.TimeLineFactory;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -286,10 +287,12 @@ public class Controller {
     }
 
     public void saveData() {
-        DataBase.saveOnClose(lGehenZeit.getText(),
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        DataBase.saveOnClose(formatter.format(LocalTime.now()),
                 lKommenZeit.getText(),
                 lStopuhr.getText(),
-                LocalDate.now().getDayOfWeek().toString());
+                format.format(LocalDate.now()));
     }
 
 
