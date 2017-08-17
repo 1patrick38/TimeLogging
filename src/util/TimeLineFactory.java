@@ -13,9 +13,13 @@ public class TimeLineFactory {
     }
 
     public static Timeline get(int duration, IntegerProperty label) {
-        Timeline t = new Timeline();
-        t.getKeyFrames().add(new KeyFrame(Duration.seconds(duration + 1)
-                , new KeyValue(label, 0)));
-        return t;
+        try{
+            Timeline t = new Timeline();
+            t.getKeyFrames().add(new KeyFrame(Duration.seconds(duration + 1)
+                    , new KeyValue(label, 0)));
+            return t;
+        }catch (Exception exception) {
+            return new Timeline(new KeyFrame(Duration.millis(1),new KeyValue(label,0)));
+        }
     }
 }

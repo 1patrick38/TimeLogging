@@ -236,6 +236,10 @@ public class Controller {
     }
 
     private void setLabelText(Label label, int hours) {
+        if(hours <= 0){
+            label.setText("00:00");
+            return;
+        }
         label.setText(String.format("%02d", formatHours(hours)) + ":" + String.format("%02d", (hours / 60) % 60));
     }
 
