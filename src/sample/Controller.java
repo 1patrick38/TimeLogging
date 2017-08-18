@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class Controller {
@@ -49,7 +51,8 @@ public class Controller {
             l02Countdown,
             l03Countdown,
             l04Countdown,
-            l05Countdown;
+            l05Countdown,
+            lWoche00Count;
     @FXML
     private ProgressBar pB10Countdown,
             pB11Countdown,
@@ -215,12 +218,12 @@ public class Controller {
         startTimeLines();
     }
 
-    private void setLabelText(Label label, int hours) {
-        if (hours <= 0) {
+    private void setLabelText(Label label, int minutes) {
+        if (minutes <= 0) {
             label.setText("00:00");
             return;
         }
-        label.setText(format(formatHours(hours)) + ":" + format((hours / 60) % 60));
+        label.setText(format(formatHours(minutes)) + ":" + format((minutes / 60) % 60));
     }
 
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
@@ -272,6 +275,7 @@ public class Controller {
         tableZeit.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("zeit"));
 
         table.getItems().setAll(DataBase.readData());
+        setLabelText(lWoche00Count, getWeekHoursInSeconds());
     }
 
     void saveData() {
@@ -287,5 +291,26 @@ public class Controller {
     private enum StopWatchStatus {
         STOPPED, RUNNING
     }
+
+    private int getWeekHoursInSeconds() {
+        final int[] weekMinutes = {0};
+        List<TimeRecord> timeRecords = DataBase.readData();
+        Collections.reverse(timeRecords);
+        timeRecords.forEach(timeRecord -> {
+            int minutes = formatTimeToMinutes(timeRecord.getZeit());
+            String x = timeRecord.getDatum();
+            String[] splittedDate = x.split("-");
+            LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]),Integer.valueOf(splittedDate[0]));
+            int day = date.getDayOfWeek().getValue();
+            weekMinutes[0] += minutes;
+        });
+        return weekMinutes[0]*60;
+    }
+
+    private int formatTimeToMinutes(String zeit) {
+        String[] split = zeit.split(":");
+        return Integer.valueOf(split[0])*60 + Integer.valueOf(split[1]);
+    }
+
 
 }

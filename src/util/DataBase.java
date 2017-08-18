@@ -55,7 +55,6 @@ public class DataBase {
                 record.setZeit(row.get(4));
                 data.add(record);
             }
-            System.out.println(data);
             stmt.close();
             con.close();
             return data;
