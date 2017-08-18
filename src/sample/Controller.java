@@ -14,14 +14,12 @@ import javafx.util.Duration;
 import util.DataBase;
 import util.TimeLineFactory;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Controller {
 
@@ -33,6 +31,7 @@ public class Controller {
     private final static int EIGHTHOURSFOURTYONEINSECONDS = 31260;
     private final static int TENHOURSINSECONDS = 36000;
     private final static int TWELVEHOURSINSECONDS = 43200;
+    private final static int ESTIMATEDWEEKSECONDS = 138600;
     private IntegerProperty fiveHoursCount = new SimpleIntegerProperty();
     private IntegerProperty sixHoursCount = new SimpleIntegerProperty();
     private IntegerProperty eightHoursTwelveMinCount = new SimpleIntegerProperty();
@@ -59,7 +58,8 @@ public class Controller {
             pB12Countdown,
             pB13Countdown,
             pB14Countdown,
-            pB15Countdown;
+            pB15Countdown,
+            pB10WocheCountdown;
     @FXML
     private Label lStopuhr;
     @FXML
@@ -164,7 +164,7 @@ public class Controller {
     }
 
 
-    public void startCountdowns() {
+    private void startCountdowns() {
 
 
         LocalTime parsedStartTime = parseStringToTime(startTime);
@@ -193,37 +193,38 @@ public class Controller {
 
         fiveHoursCount.addListener(observable -> {
             pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (FIVEHOURSINSECONDS * 1.0)));
-            setLabelText(l00Countdown, fiveHoursCount.get());
+            setLabelText(l00Countdown, fiveHoursCount.get(), true);
         });
         sixHoursCount.addListener(observable -> {
             pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (SIXHOURSINSECONDS * 1.0)));
-            setLabelText(l01Countdown, sixHoursCount.get());
+            setLabelText(l01Countdown, sixHoursCount.get(), true);
         });
         eightHoursTwelveMinCount.addListener(observable -> {
             pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (EIGHTHOURSTWELVEMINSECONDS * 1.0)));
-            setLabelText(l02Countdown, eightHoursTwelveMinCount.get());
+            setLabelText(l02Countdown, eightHoursTwelveMinCount.get(), true);
         });
         eightHoursFourtyCount.addListener(observable -> {
             pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (EIGHTHOURSFOURTYONEINSECONDS * 1.0)));
-            setLabelText(l03Countdown, eightHoursFourtyCount.get());
+            setLabelText(l03Countdown, eightHoursFourtyCount.get(), true);
         });
         tenHoursCount.addListener(observable -> {
             pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (TENHOURSINSECONDS * 1.0)));
-            setLabelText(l04Countdown, tenHoursCount.get());
+            setLabelText(l04Countdown, tenHoursCount.get(), true);
         });
         twelveHoursCount.addListener(observable -> {
             pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0)));
-            setLabelText(l05Countdown, twelveHoursCount.get());
+            setLabelText(l05Countdown, twelveHoursCount.get(), true);
         });
         startTimeLines();
     }
 
-    private void setLabelText(Label label, int minutes) {
-        if (minutes <= 0) {
+    private void setLabelText(Label label, int seconds, boolean isProgressBar) {
+        if (seconds <= 0) {
             label.setText("00:00");
             return;
         }
-        label.setText(format(formatHours(minutes)) + ":" + format((minutes / 60) % 60));
+        int minutes = (seconds / 60) % 60;
+        label.setText(format(formatHours(seconds, isProgressBar)) + ":" + format(minutes));
     }
 
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
@@ -263,9 +264,11 @@ public class Controller {
     }
 
 
-    private int formatHours(int hours) {
-        if (hours % 3600 == 0) return hours / SECONDSOFHOUR - 1;
-        return hours / SECONDSOFHOUR;
+    private int formatHours(int hours, boolean isProgressBar) {
+        if (isProgressBar) {
+            if (hours % 3600 == 0) return hours / SECONDSOFHOUR - 1;
+            return hours / SECONDSOFHOUR;
+        } else return hours / SECONDSOFHOUR;
     }
 
     void initializeTableView() {
@@ -275,7 +278,9 @@ public class Controller {
         tableZeit.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("zeit"));
 
         table.getItems().setAll(DataBase.readData());
-        setLabelText(lWoche00Count, getWeekHoursInSeconds());
+        setLabelText(lWoche00Count, getWeekHoursInSeconds(), false);
+        double value = (getWeekHoursInSeconds() * 1.0) / ESTIMATEDWEEKSECONDS;
+        pB10WocheCountdown.setProgress(value);
     }
 
     void saveData() {
@@ -287,29 +292,44 @@ public class Controller {
                 format.format(LocalDate.now()));
     }
 
-
-    private enum StopWatchStatus {
-        STOPPED, RUNNING
-    }
-
     private int getWeekHoursInSeconds() {
         final int[] weekMinutes = {0};
-        List<TimeRecord> timeRecords = DataBase.readData();
-        Collections.reverse(timeRecords);
+        List<TimeRecord> timeRecords = getRecordsOfActualWeek(DataBase.readData());
         timeRecords.forEach(timeRecord -> {
             int minutes = formatTimeToMinutes(timeRecord.getZeit());
-            String x = timeRecord.getDatum();
-            String[] splittedDate = x.split("-");
-            LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]),Integer.valueOf(splittedDate[0]));
-            int day = date.getDayOfWeek().getValue();
             weekMinutes[0] += minutes;
         });
-        return weekMinutes[0]*60;
+        return weekMinutes[0] * 60;
+    }
+
+    private List<TimeRecord> getRecordsOfActualWeek(List<TimeRecord> timeRecords) {
+        Collections.reverse(timeRecords);
+        List<TimeRecord> acc = new ArrayList<>();
+        final int[] lastMonday = {99};
+        final int[] actMonth = {99};
+        timeRecords.forEach(timeRecord -> {
+            String x = timeRecord.getDatum();
+            String[] splittedDate = x.split("-");
+            LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]), Integer.valueOf(splittedDate[0]));
+            int day = date.getDayOfMonth();
+            actMonth[0] = date.getMonthValue();
+            if (lastMonday[0] == 99) lastMonday[0] = date.with(DayOfWeek.MONDAY).getDayOfMonth();
+            if (lastMonday[0] <= day && date.getMonthValue() == actMonth[0]) {
+                acc.add(timeRecord);
+            } else return;
+
+        });
+        return acc;
+
     }
 
     private int formatTimeToMinutes(String zeit) {
         String[] split = zeit.split(":");
-        return Integer.valueOf(split[0])*60 + Integer.valueOf(split[1]);
+        return Integer.valueOf(split[0]) * 60 + Integer.valueOf(split[1]);
+    }
+
+    private enum StopWatchStatus {
+        STOPPED, RUNNING
     }
 
 

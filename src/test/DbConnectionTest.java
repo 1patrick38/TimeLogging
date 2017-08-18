@@ -14,8 +14,15 @@ public class DbConnectionTest {
             Statement stmt = con.createStatement();
             //stmt.executeUpdate( "DROP TABLE table1" );
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS table1 (id bigint auto_increment, day varchar(10), start varchar(20), end varchar(20), time varchar(20) )");
-            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( 'Montag', '10:00','12:00', '02:00' )");
-            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( 'Dienstag', '11:00','12:00', '01:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( '11-08', '10:00','12:00', '02:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( '12-08', '11:00','12:00', '01:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( '11-08', '11:00','12:00', '01:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( '14-08', '11:00','12:00', '01:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( '16-08', '11:00','12:00', '08:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( '18-08', '11:00','12:00', '03:00' )");
+            stmt.executeUpdate("INSERT INTO table1(day,start,end, time) VALUES ( 'MONDAY', '11:00','12:00', '03:00' )");
+
+            stmt.executeUpdate("DELETE FROM table1 WHERE day regexp '.*[A-Z].*'");
 
             ResultSet rs = stmt.executeQuery("SELECT * FROM table1");
 

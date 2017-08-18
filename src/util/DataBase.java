@@ -39,6 +39,7 @@ public class DataBase {
             Connection con = DriverManager.getConnection("jdbc:h2:~/test", "test", "");
             Statement stmt = con.createStatement();
 
+            stmt.executeUpdate("DELETE FROM table1 WHERE day regexp '.*[A-Z].*'");
             ResultSet rs = stmt.executeQuery("SELECT * FROM table1");
 
             List<TimeRecord> data = new ArrayList<>();
