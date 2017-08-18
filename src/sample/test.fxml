@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -126,7 +125,7 @@
                             </rowConstraints>
                             <children>
                                 <Label fx:id="lWoche00Count" alignment="CENTER" prefHeight="17.0" prefWidth="48.0" text="00:00" GridPane.rowIndex="1" />
-                                <Label alignment="CENTER" prefHeight="17.0" prefWidth="59.0" text="00:00" GridPane.rowIndex="2" />
+                                <Label fx:id="lMonat00Count" alignment="CENTER" prefHeight="17.0" prefWidth="59.0" text="00:00" GridPane.rowIndex="2" />
                                 <ProgressBar fx:id="pB10WocheCountdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                 <ProgressBar fx:id="pB11MonatCountdown" prefHeight="20.0" prefWidth="100.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                 <Label text="Wochensoll" GridPane.columnIndex="2" GridPane.rowIndex="1" />

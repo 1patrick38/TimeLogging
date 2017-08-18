@@ -32,6 +32,7 @@ public class Controller {
     private final static int TENHOURSINSECONDS = 36000;
     private final static int TWELVEHOURSINSECONDS = 43200;
     private final static int ESTIMATEDWEEKSECONDS = 138600;
+    public static final double ESTIMATEDMONTHSECONDS = 554400;
     private IntegerProperty fiveHoursCount = new SimpleIntegerProperty();
     private IntegerProperty sixHoursCount = new SimpleIntegerProperty();
     private IntegerProperty eightHoursTwelveMinCount = new SimpleIntegerProperty();
@@ -51,7 +52,8 @@ public class Controller {
             l03Countdown,
             l04Countdown,
             l05Countdown,
-            lWoche00Count;
+            lWoche00Count,
+            lMonat00Count;
     @FXML
     private ProgressBar pB10Countdown,
             pB11Countdown,
@@ -59,7 +61,8 @@ public class Controller {
             pB13Countdown,
             pB14Countdown,
             pB15Countdown,
-            pB10WocheCountdown;
+            pB10WocheCountdown,
+            pB11MonatCountdown;
     @FXML
     private Label lStopuhr;
     @FXML
@@ -279,8 +282,9 @@ public class Controller {
 
         table.getItems().setAll(DataBase.readData());
         setLabelText(lWoche00Count, getWeekHoursInSeconds(), false);
-        double value = (getWeekHoursInSeconds() * 1.0) / ESTIMATEDWEEKSECONDS;
-        pB10WocheCountdown.setProgress(value);
+        pB10WocheCountdown.setProgress((getWeekHoursInSeconds() * 1.0) / ESTIMATEDWEEKSECONDS);
+        setLabelText(lMonat00Count, getMonthHoursInSeconds(), false);
+        pB11MonatCountdown.setProgress((getMonthHoursInSeconds() * 1.0) / ESTIMATEDMONTHSECONDS);
     }
 
     void saveData() {
@@ -292,6 +296,7 @@ public class Controller {
                 format.format(LocalDate.now()));
     }
 
+    // TODO: refactor me
     private int getWeekHoursInSeconds() {
         final int[] weekMinutes = {0};
         List<TimeRecord> timeRecords = getRecordsOfActualWeek(DataBase.readData());
@@ -300,6 +305,17 @@ public class Controller {
             weekMinutes[0] += minutes;
         });
         return weekMinutes[0] * 60;
+    }
+
+    // TODO: refactor me
+    private int getMonthHoursInSeconds() {
+        final int[] monthMinutes = {0};
+        List<TimeRecord> timeRecords = getRecordsOfActualMonth(DataBase.readData());
+        timeRecords.forEach(timeRecord -> {
+            int minutes = formatTimeToMinutes(timeRecord.getZeit());
+            monthMinutes[0] += minutes;
+        });
+        return monthMinutes[0] * 60;
     }
 
     private List<TimeRecord> getRecordsOfActualWeek(List<TimeRecord> timeRecords) {
@@ -312,9 +328,28 @@ public class Controller {
             String[] splittedDate = x.split("-");
             LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]), Integer.valueOf(splittedDate[0]));
             int day = date.getDayOfMonth();
-            actMonth[0] = date.getMonthValue();
+            if (actMonth[0] == 99) actMonth[0] = date.getMonthValue();
             if (lastMonday[0] == 99) lastMonday[0] = date.with(DayOfWeek.MONDAY).getDayOfMonth();
             if (lastMonday[0] <= day && date.getMonthValue() == actMonth[0]) {
+                acc.add(timeRecord);
+            } else return;
+
+        });
+        return acc;
+
+    }
+
+    private List<TimeRecord> getRecordsOfActualMonth(List<TimeRecord> timeRecords) {
+        Collections.reverse(timeRecords);
+        List<TimeRecord> acc = new ArrayList<>();
+        final int[] actMonth = {99};
+        timeRecords.forEach(timeRecord -> {
+            String x = timeRecord.getDatum();
+            String[] splittedDate = x.split("-");
+            LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]), Integer.valueOf(splittedDate[0]));
+            int month = date.getMonthValue();
+            if (actMonth[0] == 99) actMonth[0] = month;
+            if (month == actMonth[0]) {
                 acc.add(timeRecord);
             } else return;
 
