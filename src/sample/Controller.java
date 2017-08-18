@@ -24,6 +24,7 @@ import java.util.*;
 public class Controller {
 
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    public static final double ESTIMATEDMONTHSECONDS = 554400;
     private static final int SECONDSOFHOUR = 3600;
     private final static int FIVEHOURSINSECONDS = 18000;
     private final static int SIXHOURSINSECONDS = 21600;
@@ -32,7 +33,6 @@ public class Controller {
     private final static int TENHOURSINSECONDS = 36000;
     private final static int TWELVEHOURSINSECONDS = 43200;
     private final static int ESTIMATEDWEEKSECONDS = 138600;
-    public static final double ESTIMATEDMONTHSECONDS = 554400;
     private IntegerProperty fiveHoursCount = new SimpleIntegerProperty();
     private IntegerProperty sixHoursCount = new SimpleIntegerProperty();
     private IntegerProperty eightHoursTwelveMinCount = new SimpleIntegerProperty();
@@ -195,30 +195,34 @@ public class Controller {
                 deltaTwelveHours);
 
         fiveHoursCount.addListener(observable -> {
-            pB10Countdown.setProgress((1.0 - fiveHoursCount.get() / (FIVEHOURSINSECONDS * 1.0)));
+            pB10Countdown.setProgress(calculateProgress(fiveHoursCount.get(), FIVEHOURSINSECONDS));
             setLabelText(l00Countdown, fiveHoursCount.get(), true);
         });
         sixHoursCount.addListener(observable -> {
-            pB11Countdown.setProgress((1.0 - sixHoursCount.get() / (SIXHOURSINSECONDS * 1.0)));
+            pB11Countdown.setProgress(calculateProgress(sixHoursCount.get(), SIXHOURSINSECONDS));
             setLabelText(l01Countdown, sixHoursCount.get(), true);
         });
         eightHoursTwelveMinCount.addListener(observable -> {
-            pB12Countdown.setProgress((1.0 - eightHoursTwelveMinCount.get() / (EIGHTHOURSTWELVEMINSECONDS * 1.0)));
+            pB12Countdown.setProgress(calculateProgress(eightHoursTwelveMinCount.get(), EIGHTHOURSTWELVEMINSECONDS));
             setLabelText(l02Countdown, eightHoursTwelveMinCount.get(), true);
         });
         eightHoursFourtyCount.addListener(observable -> {
-            pB13Countdown.setProgress((1.0 - eightHoursFourtyCount.get() / (EIGHTHOURSFOURTYONEINSECONDS * 1.0)));
+            pB13Countdown.setProgress(calculateProgress(eightHoursFourtyCount.get(), EIGHTHOURSFOURTYONEINSECONDS));
             setLabelText(l03Countdown, eightHoursFourtyCount.get(), true);
         });
         tenHoursCount.addListener(observable -> {
-            pB14Countdown.setProgress((1.0 - tenHoursCount.get() / (TENHOURSINSECONDS * 1.0)));
+            pB14Countdown.setProgress(calculateProgress(tenHoursCount.get(), TENHOURSINSECONDS));
             setLabelText(l04Countdown, tenHoursCount.get(), true);
         });
         twelveHoursCount.addListener(observable -> {
-            pB15Countdown.setProgress((1.0 - twelveHoursCount.get() / (TWELVEHOURSINSECONDS * 1.0)));
+            pB15Countdown.setProgress(calculateProgress(twelveHoursCount.get(), TWELVEHOURSINSECONDS));
             setLabelText(l05Countdown, twelveHoursCount.get(), true);
         });
         startTimeLines();
+    }
+
+    private double calculateProgress(int actual, int constant) {
+        return 1.0 - actual / (constant * 1.0);
     }
 
     private void setLabelText(Label label, int seconds, boolean isProgressBar) {
@@ -275,10 +279,10 @@ public class Controller {
     }
 
     void initializeTableView() {
-        tableDate.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("datum"));
-        tableKommen.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("kommen"));
-        tableGehen.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("gehen"));
-        tableZeit.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("zeit"));
+        tableDate.setCellValueFactory(new PropertyValueFactory<>("datum"));
+        tableKommen.setCellValueFactory(new PropertyValueFactory<>("kommen"));
+        tableGehen.setCellValueFactory(new PropertyValueFactory<>("gehen"));
+        tableZeit.setCellValueFactory(new PropertyValueFactory<>("zeit"));
 
         table.getItems().setAll(DataBase.readData());
         setLabelText(lWoche00Count, getWeekHoursInSeconds(), false);
@@ -324,9 +328,7 @@ public class Controller {
         final int[] lastMonday = {99};
         final int[] actMonth = {99};
         timeRecords.forEach(timeRecord -> {
-            String x = timeRecord.getDatum();
-            String[] splittedDate = x.split("-");
-            LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]), Integer.valueOf(splittedDate[0]));
+            LocalDate date = getLocalDate(timeRecord);
             int day = date.getDayOfMonth();
             if (actMonth[0] == 99) actMonth[0] = date.getMonthValue();
             if (lastMonday[0] == 99) lastMonday[0] = date.with(DayOfWeek.MONDAY).getDayOfMonth();
@@ -339,14 +341,13 @@ public class Controller {
 
     }
 
+
     private List<TimeRecord> getRecordsOfActualMonth(List<TimeRecord> timeRecords) {
         Collections.reverse(timeRecords);
         List<TimeRecord> acc = new ArrayList<>();
         final int[] actMonth = {99};
         timeRecords.forEach(timeRecord -> {
-            String x = timeRecord.getDatum();
-            String[] splittedDate = x.split("-");
-            LocalDate date = LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]), Integer.valueOf(splittedDate[0]));
+            LocalDate date = getLocalDate(timeRecord);
             int month = date.getMonthValue();
             if (actMonth[0] == 99) actMonth[0] = month;
             if (month == actMonth[0]) {
@@ -356,6 +357,12 @@ public class Controller {
         });
         return acc;
 
+    }
+
+    private LocalDate getLocalDate(TimeRecord timeRecord) {
+        String x = timeRecord.getDatum();
+        String[] splittedDate = x.split("-");
+        return LocalDate.of(LocalDate.now().getYear(), Integer.valueOf(splittedDate[1]), Integer.valueOf(splittedDate[0]));
     }
 
     private int formatTimeToMinutes(String zeit) {
