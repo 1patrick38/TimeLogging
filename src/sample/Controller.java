@@ -14,7 +14,6 @@ import javafx.util.Duration;
 import util.DataBase;
 import util.TimeLineFactory;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,6 +23,7 @@ import java.util.Optional;
 
 public class Controller {
 
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
     private static final int SECONDSOFHOUR = 3600;
     private final static int FIVEHOURSINSECONDS = 18000;
     private final static int SIXHOURSINSECONDS = 21600;
@@ -31,22 +31,18 @@ public class Controller {
     private final static int EIGHTHOURSFOURTYONEINSECONDS = 31260;
     private final static int TENHOURSINSECONDS = 36000;
     private final static int TWELVEHOURSINSECONDS = 43200;
-
     private IntegerProperty fiveHoursCount = new SimpleIntegerProperty();
     private IntegerProperty sixHoursCount = new SimpleIntegerProperty();
     private IntegerProperty eightHoursTwelveMinCount = new SimpleIntegerProperty();
     private IntegerProperty eightHoursFourtyCount = new SimpleIntegerProperty();
     private IntegerProperty tenHoursCount = new SimpleIntegerProperty();
     private IntegerProperty twelveHoursCount = new SimpleIntegerProperty();
-
     private Timeline countdownFiveHours, countdownSixHours,
             countdownEightTwelveHours,
             countdownEightFourtyHours,
             countdownTenHours,
             countdownTwelveHours;
-
     private Optional<String> startTime = Optional.empty();
-
     @FXML
     private Label l00Countdown,
             l01Countdown,
@@ -79,13 +75,10 @@ public class Controller {
     private TableColumn<TimeRecord, String> tableGehen;
     @FXML
     private TableColumn<TimeRecord, String> tableZeit;
-
     private StopwatchWorker stopwatchWorker;
     private StopWatchStatus currentStatus = StopWatchStatus.STOPPED;
-
     @FXML
     private Label lUhrzeit;
-
 
     private static LocalTime parseStringToTime(Optional<String> input) {
         try {
@@ -96,6 +89,7 @@ public class Controller {
         }
     }
 
+    // TODO: refactor to timeline!!!!
     @FXML
     private void handleStartStop(ActionEvent event) {
 
@@ -116,21 +110,20 @@ public class Controller {
             t.start();
         }
 
-
-        lKommenZeit.setText(kommenZeit());
-        lGehenZeit.setText(gehenZeit());
+        lKommenZeit.setText(startingTime());
+        lGehenZeit.setText(estimatedEndTime());
 
         startCountdowns();
 
     }
 
-    public void initClock() {
+    void initClock() {
         Timeline clock = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             Calendar cal = Calendar.getInstance();
             int second = cal.get(Calendar.SECOND);
             int minute = cal.get(Calendar.MINUTE);
             int hour = cal.get(Calendar.HOUR_OF_DAY);
-            lUhrzeit.setText(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
+            lUhrzeit.setText(format(hour) + ":" + format(minute) + ":" + format(second));
         }),
                 new KeyFrame(Duration.seconds(1))
         );
@@ -138,29 +131,16 @@ public class Controller {
         clock.play();
     }
 
-    public String kommenZeit() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+    private String startingTime() {
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
             return startTime.get();
-        } else return formatter.format(LocalDateTime.now());
+        } else return TIME_FORMATTER.format(LocalDateTime.now());
     }
 
-    // hol dir die Zeit direct von der parseStringToTime methode. Der if zweig hier darf nur eine Zeile lang sein ;)
-    // In dieser Klasse wird DateTimeFormatter zweimal genau gleich instanziert --> hier kann man refactoren
-    // die Prüfung im if von kommenZeit ist 1:1 wie die von gehenZeit --> indiz dass man hier was zusammenfassen kann
-    public String gehenZeit() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+    private String estimatedEndTime() {
         if (startTime.isPresent() && startTime.get().matches("[0-9:]*")) {
-
-            System.out.println(startTime);
-            String[] split = startTime.get().split(":");
-            // startTime = Optional.of(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1]), 0).toString());
-
-            LocalTime maximalWorking = LocalTime.now().with(LocalTime.of(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
-            maximalWorking.plusHours(10).plusMinutes(30);
-
-            return formatter.format(maximalWorking.plusHours(10).plusMinutes(30));
-        } else return formatter.format(LocalDateTime.now().plusHours(10).plusMinutes(30));
+            return TIME_FORMATTER.format(parseStringToTime(startTime).plusHours(10).plusMinutes(30));
+        } else return TIME_FORMATTER.format(LocalDateTime.now().plusHours(10).plusMinutes(30));
     }
 
     @FXML
@@ -236,11 +216,11 @@ public class Controller {
     }
 
     private void setLabelText(Label label, int hours) {
-        if(hours <= 0){
+        if (hours <= 0) {
             label.setText("00:00");
             return;
         }
-        label.setText(String.format("%02d", formatHours(hours)) + ":" + String.format("%02d", (hours / 60) % 60));
+        label.setText(format(formatHours(hours)) + ":" + format((hours / 60) % 60));
     }
 
     private void createTimeLines(int deltaFiveHours, int deltaSixHours, int deltaEightTwelveHours, int deltaEightFourtyHours, int deltaTenHours, int deltaTwelveHours) {
@@ -275,13 +255,17 @@ public class Controller {
         return duration - (currentTime - startTime);
     }
 
+    private String format(int input) {
+        return String.format("%02d", input);
+    }
+
 
     private int formatHours(int hours) {
         if (hours % 3600 == 0) return hours / SECONDSOFHOUR - 1;
         return hours / SECONDSOFHOUR;
     }
 
-    public void initializeTableView() {
+    void initializeTableView() {
         tableDate.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("datum"));
         tableKommen.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("kommen"));
         tableGehen.setCellValueFactory(new PropertyValueFactory<TimeRecord, String>("gehen"));
@@ -290,7 +274,7 @@ public class Controller {
         table.getItems().setAll(DataBase.readData());
     }
 
-    public void saveData() {
+    void saveData() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         DataBase.saveOnClose(formatter.format(LocalTime.now()),
